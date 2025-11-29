@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -37,6 +38,22 @@ export default function Home() {
             <br />
             정보 비대칭 제거 → 투기 원천 차단 → 국민 신뢰 회복
           </p>
+
+          {/* 프로토타입 바로가기 버튼 */}
+          <div className="mb-8">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-3 px-8 py-4 bg-white text-blue-600 font-bold text-lg rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
+              </svg>
+              프로토타입 체험하기
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
+          </div>
 
           <div className="flex flex-wrap gap-4 mb-8">
             <div className="bg-white/10 backdrop-blur-sm rounded-xl px-6 py-4 border border-white/20">
