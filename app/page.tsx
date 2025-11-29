@@ -1,15 +1,57 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
+
+const slides = [
+  {
+    id: 1,
+    image: 'https://www.lh.or.kr/images/main/main_visual1.jpg',
+    title: '모두가 아는 LH',
+    subtitle: 'AI 기반 실시간 투명경영 플랫폼',
+    description: '"모두가 알면, 아무도 못 숨긴다"',
+  },
+  {
+    id: 2,
+    image: 'https://www.xn--3-3u6ey6lv7rsa.kr/images/main/mainSlide01.jpg',
+    title: '생애 첫 나의 집',
+    subtitle: '국민 주거 안정을 위한 투명한 공급',
+    description: '3기 신도시와 함께하는 희망의 시작',
+  },
+  {
+    id: 3,
+    image: 'https://www.xn--3-3u6ey6lv7rsa.kr/images/main/mainSlide02.jpg',
+    title: '신뢰받는 LH',
+    subtitle: '국민과 함께 만드는 깨끗한 조직',
+    description: '정보 공개로 투기를 원천 차단합니다',
+  },
+];
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  }, []);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  }, []);
+
+  // Auto-play
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+    const timer = setInterval(nextSlide, 5000);
+    return () => clearInterval(timer);
+  }, [isAutoPlaying, nextSlide]);
 
   const systems = [
     {
@@ -82,82 +124,171 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-slate-900">
-      {/* Hero Section */}
-      <header className="relative overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900" />
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl" />
-          {/* Grid pattern */}
-          <div className="absolute inset-0 opacity-20" style={{
-            backgroundImage: 'linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px)',
-            backgroundSize: '50px 50px'
-          }} />
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-6 py-20 lg:py-32">
+      {/* Fullscreen Hero Slider */}
+      <header className="relative h-screen w-full overflow-hidden">
+        {/* Slides */}
+        <AnimatePresence mode="wait">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-center"
+            key={currentSlide}
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.7 }}
+            className="absolute inset-0"
           >
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-8">
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <span className="text-white/80 text-sm">LH 투명경영 플랫폼 프로토타입</span>
+            {/* Background Image */}
+            <div className="absolute inset-0">
+              <Image
+                src={slides[currentSlide].image}
+                alt={slides[currentSlide].title}
+                fill
+                className="object-cover"
+                priority
+                unoptimized
+              />
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/70 to-slate-900/50" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
             </div>
+          </motion.div>
+        </AnimatePresence>
 
-            {/* Title */}
-            <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight">
-              모두가 아는{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
-                LH
-              </span>
-            </h1>
-
-            {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-slate-300 mb-4 max-w-3xl mx-auto">
-              AI 기반 실시간 투명경영 플랫폼
-            </p>
-            <p className="text-lg text-cyan-400 font-medium mb-12">
-              "모두가 알면, 아무도 못 숨긴다"
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <Link
-                href="/dashboard"
-                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-lg rounded-2xl shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-105 transition-all"
+        {/* Content */}
+        <div className="relative h-full flex items-center">
+          <div className="max-w-7xl mx-auto px-6 w-full">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentSlide}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -30 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="max-w-3xl"
               >
-                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
-                </svg>
-                통합 대시보드
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                </svg>
-              </Link>
-            </div>
+                {/* Badge */}
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 mb-8">
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                  <span className="text-white/80 text-sm">LH 투명경영 플랫폼 프로토타입</span>
+                </div>
 
-            {/* Metrics */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                {/* Title */}
+                <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight">
+                  {slides[currentSlide].title.includes('LH') ? (
+                    <>
+                      {slides[currentSlide].title.replace('LH', '')}{' '}
+                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
+                        LH
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
+                      {slides[currentSlide].title}
+                    </span>
+                  )}
+                </h1>
+
+                {/* Subtitle */}
+                <p className="text-xl md:text-2xl text-slate-300 mb-4">
+                  {slides[currentSlide].subtitle}
+                </p>
+                <p className="text-lg text-cyan-400 font-medium mb-12">
+                  {slides[currentSlide].description}
+                </p>
+
+                {/* CTA Button */}
+                <Link
+                  href="/dashboard"
+                  className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold text-lg rounded-2xl shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-105 transition-all"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+                  </svg>
+                  통합 대시보드
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                  </svg>
+                </Link>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Metrics - Bottom Right */}
+            <div className="absolute bottom-32 right-6 hidden lg:grid grid-cols-2 gap-3 max-w-md">
               {metrics.map((metric, index) => (
                 <motion.div
                   key={metric.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 + index * 0.1 }}
-                  className="bg-white/5 backdrop-blur-sm rounded-2xl p-5 border border-white/10"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 + index * 0.1 }}
+                  className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/10"
                 >
-                  <p className="text-3xl md:text-4xl font-bold text-white mb-1">{metric.value}</p>
-                  <p className="text-sm text-slate-400">{metric.label}</p>
+                  <p className="text-2xl font-bold text-white">{metric.value}</p>
+                  <p className="text-xs text-slate-400">{metric.label}</p>
                   <p className="text-xs text-cyan-400">{metric.desc}</p>
                 </motion.div>
               ))}
             </div>
-          </motion.div>
+          </div>
+        </div>
+
+        {/* Slider Controls */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-6">
+          {/* Prev Button */}
+          <button
+            onClick={prevSlide}
+            className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+
+          {/* Slide Indicators */}
+          <div className="flex items-center gap-3">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentSlide(index)}
+                className={`h-2 rounded-full transition-all ${
+                  index === currentSlide
+                    ? 'w-8 bg-cyan-400'
+                    : 'w-2 bg-white/30 hover:bg-white/50'
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Next Button */}
+          <button
+            onClick={nextSlide}
+            className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+
+          {/* Play/Pause */}
+          <button
+            onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+            className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white hover:bg-white/20 transition-all"
+          >
+            {isAutoPlaying ? (
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            )}
+          </button>
+        </div>
+
+        {/* Slide Counter */}
+        <div className="absolute bottom-8 right-8 text-white/60 text-sm font-mono">
+          <span className="text-white font-bold">{String(currentSlide + 1).padStart(2, '0')}</span>
+          <span className="mx-2">/</span>
+          <span>{String(slides.length).padStart(2, '0')}</span>
         </div>
 
         {/* Scroll indicator */}
@@ -165,17 +296,40 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          className="absolute bottom-8 left-8"
         >
           <motion.div
             animate={{ y: [0, 8, 0] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-            className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2"
+            className="flex flex-col items-center gap-2"
           >
-            <div className="w-1.5 h-3 bg-white/50 rounded-full" />
+            <span className="text-white/40 text-xs uppercase tracking-widest rotate-90 origin-center translate-y-8">Scroll</span>
+            <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center pt-2">
+              <div className="w-1.5 h-3 bg-white/50 rounded-full" />
+            </div>
           </motion.div>
         </motion.div>
       </header>
+
+      {/* Mobile Metrics */}
+      <section className="lg:hidden py-8 px-6 -mt-16 relative z-10">
+        <div className="grid grid-cols-2 gap-3">
+          {metrics.map((metric, index) => (
+            <motion.div
+              key={metric.label}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+              className="bg-slate-800/80 backdrop-blur-md rounded-xl p-4 border border-slate-700"
+            >
+              <p className="text-2xl font-bold text-white">{metric.value}</p>
+              <p className="text-xs text-slate-400">{metric.label}</p>
+              <p className="text-xs text-cyan-400">{metric.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
 
       {/* Systems Section */}
       <section className="relative py-20 lg:py-32">
