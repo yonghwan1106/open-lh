@@ -530,6 +530,11 @@ export default function Home() {
               </p>
             </div>
           </div>
+          <div className="mt-6 pt-6 border-t border-slate-800 text-center">
+            <p className="text-slate-500 text-sm">
+              작성: 박용환 (크리에이티브 넥서스) 010-7939-3123
+            </p>
+          </div>
         </div>
       </footer>
     </div>
