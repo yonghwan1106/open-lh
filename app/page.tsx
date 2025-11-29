@@ -8,21 +8,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 const slides = [
   {
     id: 1,
-    image: 'https://www.lh.or.kr/images/main/main_visual1.jpg',
+    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=80',
     title: '모두가 아는 LH',
     subtitle: 'AI 기반 실시간 투명경영 플랫폼',
     description: '"모두가 알면, 아무도 못 숨긴다"',
   },
   {
     id: 2,
-    image: 'https://www.xn--3-3u6ey6lv7rsa.kr/images/main/mainSlide01.jpg',
+    image: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1920&q=80',
     title: '생애 첫 나의 집',
     subtitle: '국민 주거 안정을 위한 투명한 공급',
     description: '3기 신도시와 함께하는 희망의 시작',
   },
   {
     id: 3,
-    image: 'https://www.xn--3-3u6ey6lv7rsa.kr/images/main/mainSlide02.jpg',
+    image: 'https://images.unsplash.com/photo-1449844908441-8829872d2607?w=1920&q=80',
     title: '신뢰받는 LH',
     subtitle: '국민과 함께 만드는 깨끗한 조직',
     description: '정보 공개로 투기를 원천 차단합니다',
